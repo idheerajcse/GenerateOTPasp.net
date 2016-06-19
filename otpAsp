@@ -1,0 +1,626 @@
+http://studyclues.com/2016/06/18/otp-generation-c/
+
+
+
+OTP Generation in Asp.net with C#
+Murali  13 hours ago	Dot Net Tips Leave a comment 1,060 Views
+
+OTP Generation in C#:
+OTP Generation is very important in today’s programming. OTP Stands for one time Password. it is a password that is valid for only one login session or transaction OTPs avoid a number of shortcomings that are associated with traditional (static) password-based authentication.
+
+Now a days OTP is used for all Transactions like when working in banking transactions,while user registrations and when the time of forget password. As a programmer we need to to generate OTP from our program in this article we will see how to generate OTP from C# Applications.
+
+Step 1: Create new website in Visual Studio
+
+Step 2: Add a New class called OTPGenerate.cs and place below code
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Security.Cryptography;
+using System.Text;
+
+/// <summary>
+/// Summary description for Global
+/// </summary>
+public class OTPGenerate
+{
+    public OTPGenerate()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+    public static string OTPCharacters()
+    {
+        string OTPLength = "6";
+        
+        string NewCharacters = "";
+
+        //This one tells you which characters are allowed in this new password
+        string allowedChars = "";
+        //Here Specify your OTP Characters
+        allowedChars = "1,2,3,4,5,6,7,8,9,0";
+        //If you Need more secure OTP then uncomment Below Lines 
+        //  allowedChars += "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,";        
+        // allowedChars += "~,!,@,#,$,%,^,&,*,+,?";
+
+        
+
+        char[] sep = { ',' };
+        string[] arr = allowedChars.Split(sep);
+
+        string IDString = "";
+        string temp = "";
+
+        //utilize the "random" class
+        Random rand = new Random();
+
+        
+        for (int i = 0; i < Convert.ToInt32(OTPLength); i++)
+        {
+            temp = arr[rand.Next(0, arr.Length)];
+            IDString += temp;
+            NewCharacters = IDString;
+        }
+
+        return NewCharacters;
+    }
+    public static string OTPGenerator(string uniqueIdentity, string uniqueCustomerIdentity)
+    {
+        int length = 6;
+        string oneTimePassword = "";
+        DateTime dateTime = DateTime.Now;
+        string _strParsedReqNo = dateTime.Day.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Month.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Year.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Hour.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Minute.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Second.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Millisecond.ToString();
+        _strParsedReqNo = _strParsedReqNo + uniqueCustomerIdentity;
+
+
+        _strParsedReqNo = uniqueIdentity + uniqueCustomerIdentity;
+        using (MD5 md5 = MD5.Create())
+        {
+            //Get hash code of entered request id in byte format.
+            byte[] _reqByte = md5.ComputeHash(Encoding.UTF8.GetBytes(_strParsedReqNo));
+            //convert byte array to integer.
+            int _parsedReqNo = BitConverter.ToInt32(_reqByte, 0);
+            string _strParsedReqId = Math.Abs(_parsedReqNo).ToString();
+            //Check if length of hash code is less than 9.
+            //If so, then prepend multiple zeros upto the length becomes atleast 9 characters.
+            if (_strParsedReqId.Length < 9)
+            {
+                StringBuilder sb = new StringBuilder(_strParsedReqId);
+                for (int k = 0; k < (9 - _strParsedReqId.Length); k++)
+                {
+                    sb.Insert(0, '0');
+                }
+                _strParsedReqId = sb.ToString();
+            }
+            oneTimePassword = _strParsedReqId;
+        }
+        
+        if (oneTimePassword.Length >= length)
+        {
+            oneTimePassword = oneTimePassword.Substring(0, length);
+        }
+        return oneTimePassword;
+    }
+}
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Security.Cryptography;
+using System.Text;
+ 
+/// <summary>
+/// Summary description for Global
+/// </summary>
+public class OTPGenerate
+{
+    public OTPGenerate()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+    public static string OTPCharacters()
+    {
+        string OTPLength = "6";
+        
+        string NewCharacters = "";
+ 
+        //This one tells you which characters are allowed in this new password
+        string allowedChars = "";
+        //Here Specify your OTP Characters
+        allowedChars = "1,2,3,4,5,6,7,8,9,0";
+        //If you Need more secure OTP then uncomment Below Lines 
+        //  allowedChars += "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,";        
+        // allowedChars += "~,!,@,#,$,%,^,&,*,+,?";
+ 
+        
+ 
+        char[] sep = { ',' };
+        string[] arr = allowedChars.Split(sep);
+ 
+        string IDString = "";
+        string temp = "";
+ 
+        //utilize the "random" class
+        Random rand = new Random();
+ 
+        
+        for (int i = 0; i < Convert.ToInt32(OTPLength); i++)
+        {
+            temp = arr[rand.Next(0, arr.Length)];
+            IDString += temp;
+            NewCharacters = IDString;
+        }
+ 
+        return NewCharacters;
+    }
+    public static string OTPGenerator(string uniqueIdentity, string uniqueCustomerIdentity)
+    {
+        int length = 6;
+        string oneTimePassword = "";
+        DateTime dateTime = DateTime.Now;
+        string _strParsedReqNo = dateTime.Day.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Month.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Year.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Hour.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Minute.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Second.ToString();
+        _strParsedReqNo = _strParsedReqNo + dateTime.Millisecond.ToString();
+        _strParsedReqNo = _strParsedReqNo + uniqueCustomerIdentity;
+ 
+ 
+        _strParsedReqNo = uniqueIdentity + uniqueCustomerIdentity;
+        using (MD5 md5 = MD5.Create())
+        {
+            //Get hash code of entered request id in byte format.
+            byte[] _reqByte = md5.ComputeHash(Encoding.UTF8.GetBytes(_strParsedReqNo));
+            //convert byte array to integer.
+            int _parsedReqNo = BitConverter.ToInt32(_reqByte, 0);
+            string _strParsedReqId = Math.Abs(_parsedReqNo).ToString();
+            //Check if length of hash code is less than 9.
+            //If so, then prepend multiple zeros upto the length becomes atleast 9 characters.
+            if (_strParsedReqId.Length < 9)
+            {
+                StringBuilder sb = new StringBuilder(_strParsedReqId);
+                for (int k = 0; k < (9 - _strParsedReqId.Length); k++)
+                {
+                    sb.Insert(0, '0');
+                }
+                _strParsedReqId = sb.ToString();
+            }
+            oneTimePassword = _strParsedReqId;
+        }
+        
+        if (oneTimePassword.Length >= length)
+        {
+            oneTimePassword = oneTimePassword.Substring(0, length);
+        }
+        return oneTimePassword;
+    }
+}
+Step 3:Add new website  called GenerateOTP.aspx and place below code
+
+GenerateOTP.aspx
+
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="GenerateOTP.aspx.cs" Inherits="GenerateOTP" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <asp:Button ID="Button1" runat="server" Text="Generate OTP" 
+            onclick="Button1_Click" />
+        <br />
+        <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+    </div>
+    </form>
+</body>
+</html>
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="GenerateOTP.aspx.cs" Inherits="GenerateOTP" %>
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <asp:Button ID="Button1" runat="server" Text="Generate OTP" 
+            onclick="Button1_Click" />
+        <br />
+        <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+    </div>
+    </form>
+</body>
+</html>
+GenerateOTP.aspx.cs
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Net;
+using System.IO;
+using System.Text;
+using System.Net.Mail;
+
+public partial class GenerateOTP : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        //Here Random class used for Random Number
+        //Instead of Random Number You can pass Customer ID/User Id Here
+        Random rng = new Random();
+
+
+        //Fetching OTP Characters
+        string OtpCharacters = OTPGenerate.OTPCharacters();
+
+        //Createing More Secure OTP Password by Using MD5 algorithm
+        string OTPPassword = OTPGenerate.OTPGenerator(OtpCharacters, rng.Next(10).ToString());
+
+        //Here I am Displaying OTP Password in Label Instead of Displaying You Can Pass OTP Via Email or SMS
+        Label1.Text = OTPPassword;
+
+        //if you want to send otp to password to mobile number just uncomment below line and provide your bulksms url
+       // sendsmsOtp("to mobile number", OTPPassword);
+
+        //if you want to send otp to password to email just uncomment below line and provide from email address and password
+       // sendOTPEmail("to email address", OTPPassword);
+        
+    }
+
+    private void sendsmsOtp(string tomobile, string OTP)
+    {      
+        string strUrl = "Here You can Pass your BulkSMS Url and Pass OTP and Tomobile Number Here";
+        WebRequest request = HttpWebRequest.Create(strUrl);
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        Stream s = (Stream)response.GetResponseStream();
+        StreamReader readStream = new StreamReader(s);
+        string dataString = readStream.ReadToEnd();
+        response.Close();
+        s.Close();
+        readStream.Close();
+    }
+    private void sendOTPEmail(string ToEmail, string OTP)
+    {
+        try
+        {
+            string fromaddress = "senderaddress@gmail.com";
+            string frompassword = "fromaddress mail passoword";
+            string body = string.Empty;
+            body = "OTP Password=" + OTP;
+            MailMessage mm = new MailMessage(fromaddress, ToEmail);
+            mm.Subject = "OTP";
+            mm.Body = body;
+            mm.IsBodyHtml = true;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com"; //Gmail
+            smtp.EnableSsl = true;
+            System.Net.NetworkCredential NetworkCred = new System.Net.NetworkCredential();
+            NetworkCred.UserName = fromaddress;
+            NetworkCred.Password = frompassword;
+            smtp.UseDefaultCredentials = true;
+            smtp.Credentials = NetworkCred;
+            smtp.Port = 25;  //gmail
+            smtp.Send(mm);
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+    }
+}
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Net;
+using System.IO;
+using System.Text;
+using System.Net.Mail;
+ 
+public partial class GenerateOTP : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+ 
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        //Here Random class used for Random Number
+        //Instead of Random Number You can pass Customer ID/User Id Here
+        Random rng = new Random();
+ 
+ 
+        //Fetching OTP Characters
+        string OtpCharacters = OTPGenerate.OTPCharacters();
+ 
+        //Createing More Secure OTP Password by Using MD5 algorithm
+        string OTPPassword = OTPGenerate.OTPGenerator(OtpCharacters, rng.Next(10).ToString());
+ 
+        //Here I am Displaying OTP Password in Label Instead of Displaying You Can Pass OTP Via Email or SMS
+        Label1.Text = OTPPassword;
+ 
+        //if you want to send otp to password to mobile number just uncomment below line and provide your bulksms url
+       // sendsmsOtp("to mobile number", OTPPassword);
+ 
+        //if you want to send otp to password to email just uncomment below line and provide from email address and password
+       // sendOTPEmail("to email address", OTPPassword);
+        
+    }
+ 
+    private void sendsmsOtp(string tomobile, string OTP)
+    {      
+        string strUrl = "Here You can Pass your BulkSMS Url and Pass OTP and Tomobile Number Here";
+        WebRequest request = HttpWebRequest.Create(strUrl);
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        Stream s = (Stream)response.GetResponseStream();
+        StreamReader readStream = new StreamReader(s);
+        string dataString = readStream.ReadToEnd();
+        response.Close();
+        s.Close();
+        readStream.Close();
+    }
+    private void sendOTPEmail(string ToEmail, string OTP)
+    {
+        try
+        {
+            string fromaddress = "senderaddress@gmail.com";
+            string frompassword = "fromaddress mail passoword";
+            string body = string.Empty;
+            body = "OTP Password=" + OTP;
+            MailMessage mm = new MailMessage(fromaddress, ToEmail);
+            mm.Subject = "OTP";
+            mm.Body = body;
+            mm.IsBodyHtml = true;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com"; //Gmail
+            smtp.EnableSsl = true;
+            System.Net.NetworkCredential NetworkCred = new System.Net.NetworkCredential();
+            NetworkCred.UserName = fromaddress;
+            NetworkCred.Password = frompassword;
+            smtp.UseDefaultCredentials = true;
+            smtp.Credentials = NetworkCred;
+            smtp.Port = 25;  //gmail
+            smtp.Send(mm);
+ 
+        }
+        catch (Exception ex)
+        {
+ 
+        }
+ 
+    }
+}
+Step 4:Run Application and click Generate OTP button you will get below output
